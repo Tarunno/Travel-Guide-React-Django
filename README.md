@@ -17,6 +17,7 @@
 #### 3. CURD
 ## Place:
 ![](GIF/place.gif)
+### In back-end I have built a REST API using django. It has CURD fauntionality. We can authenticate users and upload profile image also.
 ## API overview:
 ![](Screen-shots/api_overview.png)
 # Super user: Travel
