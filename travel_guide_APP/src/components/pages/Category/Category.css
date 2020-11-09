@@ -1,0 +1,42 @@
+.Category{
+	display: flex;
+}
+.Category-container{
+	width: 100%;
+	height: 50vh;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+.Category-container-text{
+	text-align: center;
+	width: 60%;
+	position: relative;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	color: white;
+	text-shadow: 2px 2px 2px black;
+}
+.Category-container-text h1{
+	font-size: 100px;
+	font-family: 'Arial', sans-serif;
+}
+
+@media screen and (max-width: 760px){
+	.Category-container{
+		height: 30vh;
+	}
+	.Category-container-text h1{
+		font-size: 70px;
+	}
+	.Category-container-text{
+		text-align: center;
+		width: 100%;
+	}
+}
+@media screen and (max-width: 560px){
+	.Category-container-text h1{
+		font-size: 50px;
+	}
+}

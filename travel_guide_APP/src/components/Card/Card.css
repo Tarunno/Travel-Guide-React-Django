@@ -1,0 +1,208 @@
+.Card-primary{
+	float: left;
+	width: 46.3%;
+	height: 430px;
+	margin-right: 3.5%;
+	margin-bottom: 40px;
+	box-shadow: 3px 3px 15px lightgray;
+	border-radius: 10px;
+	background-color: white;
+}
+.Card-primary:hover img{
+	transform: scale(1.4);
+	transition: 2s;
+}
+.hide{
+	padding: 10px;
+}
+.Card-secondary{
+	float: left;
+	width: 31%;
+	height: 310px;
+	margin-right: 15px;
+	margin-bottom: 20px;
+	background-color: white;
+	box-shadow: 3px 3px 15px lightgray;
+	border-radius: 10px;
+	background-color: white;
+}
+.Card-secondary:hover img{
+	transform: scale(1.4);
+	transition: 2s;
+}
+.Card-primary .Card-img{
+	height: 300px;
+	overflow: hidden;
+	border-radius: 10px 10px 0px 0px;
+}
+.Card-primary img{
+	width: 100%;
+	height: 300px;
+	border-radius: 10px 10px 0px 0px;
+	transition: 2s;
+}
+.Card-secondary .Card-img{
+	height: 200px;
+	overflow: hidden;
+	border-radius: 10px 10px 0px 0px;
+}
+.Card-secondary img{
+	width: 100%;
+	height: 200px;
+	border-radius: 10px 10px 0px 0px;
+	transition: 2s;
+}
+.Card-primary h3{
+	margin: 20px;
+	margin-top: 15px;
+}
+.Card-secondary h3{
+	margin: 15px;
+	margin-top: 5px;
+	font-size: 15px;
+}
+.Card-primary .category{
+	position: relative;
+	top: -28px;
+	left: 15px;
+	display: inline;
+	padding: 10px;
+	z-index: 10;
+	background-color: #23c0cf;
+	font-weight: bold;
+	color: white;
+	font-family: 'Arial', sans-serif;
+}
+
+.Card-secondary .category{
+	position: relative;
+	top: -26px;
+	left: 15px;
+	font-size: 12px;
+	display: inline;
+	padding: 8px;
+	z-index: 10;
+	background-color: #23c0cf;
+	font-weight: bold;
+	color: white;
+	font-family: 'Arial', sans-serif;
+}
+.CardContainer a{
+	color: black;
+	text-decoration: none;
+}
+
+@media screen and (max-width: 960px) {
+	.Card-primary{
+		float: left;
+		width: 100%;
+		height: 370px;
+		margin-right: 0px;
+		margin-bottom: 40px;
+		background-color: white;
+		box-shadow: 3px 3px 15px lightgray;
+		border-radius: 10px;
+		background-color: white;
+	}
+	.Card-secondary{
+		float: left;
+		width: 100%;
+		height: 370px;
+		margin-right: 0px;
+		margin-bottom: 40px;
+	}
+	.Card-primary .Card-img{
+		height: 240px;
+		overflow: hidden;
+		border-radius: 10px 10px 0px 0px;
+	}
+	.Card-secondary .Card-img{
+		height: 240px;
+		overflow: hidden;
+		border-radius: 10px 10px 0px 0px;
+	}
+
+	.Card-primary img{
+		width: 100%;
+		height: 240px;
+		border-radius: 10px 10px 0px 0px;
+	}
+	.Card-secondary img{
+		width: 100%;
+		height: 240px;
+		border-radius: 10px 10px 0px 0px;
+	}
+	.Card-primary h3{
+		margin: 15px;
+		margin-top: 5px;
+		font-size: 20px;
+	}
+	.Card-secondary h3{
+		margin: 15px;
+		margin-top: 5px;
+		font-size: 20px;
+	}
+	.Card-primary .category{
+		position: relative;
+		top: -26px;
+		left: 15px;
+		font-size: 12px;
+		display: inline;
+		padding: 8px;
+		z-index: 10;
+		background-color: #23c0cf;
+		font-weight: bold;
+		color: white;
+		font-family: 'Arial', sans-serif;
+	}
+}
+@media screen and (max-width: 760px) {
+	.Card-primary{
+		float: left;
+		width: 100%;
+		height: 330px;
+		margin-right: 0px;
+		margin-bottom: 40px;
+		background-color: white;
+		box-shadow: 3px 3px 15px lightgray;
+		border-radius: 10px;
+		background-color: white;
+	}
+	.Card-secondary{
+		float: left;
+		width: 100%;
+		height: 330px;
+		margin-right: 0px;
+		margin-bottom: 40px;
+	}
+	.Card-primary .Card-img{
+		height: 225px;
+		overflow: hidden;
+		border-radius: 10px 10px 0px 0px;
+	}
+	.Card-secondary .Card-img{
+		height: 225px;
+		overflow: hidden;
+		border-radius: 10px 10px 0px 0px;
+	}
+	.Card-primary img{
+		width: 100%;
+		height: 225px;
+		border-radius: 10px 10px 0px 0px;
+	}
+	.Card-secondary img{
+		width: 100%;
+		height: 225px;
+		border-radius: 10px 10px 0px 0px;
+	}
+	.Card-primary h3{
+		margin: 15px;
+		margin-top: 5px;
+		font-size: 15px;
+	}
+	.Card-secondary h3{
+		margin: 15px;
+		margin-top: 5px;
+		font-size: 15px;
+	}
+}

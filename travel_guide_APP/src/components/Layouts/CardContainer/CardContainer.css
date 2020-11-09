@@ -1,0 +1,13 @@
+.CardContainer{
+	display: flex;
+	padding-bottom: 70px;
+}
+.CardContainer-container{
+	width: 70%;
+	margin: auto;
+}
+h1{
+	padding-bottom: 50px;
+	padding-top: 60px;
+	text-align: center;
+}

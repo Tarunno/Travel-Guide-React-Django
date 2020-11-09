@@ -1,0 +1,163 @@
+.Profile{
+	display: flex;
+	margin-bottom: 150px;
+}
+.Profile-constainer{
+	height: 50vh;
+	width: 100%;
+	background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, .2)), url('/static/images/profile.jpg');
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center;
+}
+.Profile-constainer .Profile-info{
+	position: absolute;
+	width: 500px;
+	top: 40vh;
+	left: 15%;
+}
+.Profile-info img{
+	float: left;
+	width: 200px;
+	height: 200px;
+	margin-right: 10px;
+	border-radius: 5px;
+	border: 6px solid white;
+}
+.name{
+	float: left;
+	display: inline;
+	margin: 0px;
+	padding: 0px;
+	padding-top: 90px;
+	width: 280px;
+	text-align: left;
+}
+.username{
+	float: left;
+	display: inline;
+	margin: 0px;
+	padding: 0px;
+	color: gray;
+	font-weight: lighter;
+	font-family: 'Arial', sans-serif;
+}
+.change-image-constainer{
+	display: inline;
+	position: relative;
+	top: 153px;
+	left: -65px;
+	z-index: 10;
+	padding: 10px;
+	background-color: rgba(210, 210, 210, 0.7);
+	padding-top: 15px;
+	border-radius: 5px;
+	cursor: pointer;
+}
+#change-image{
+	font-size: 25px;
+	z-index: 10;
+}
+.upload-window{
+	display: none;
+	position: fixed;
+	height: 100vh;
+	width: 100%;
+	z-index: 100;
+	background-color: rgba(0, 0, 0, 0.3);
+}
+.upload-window-mini{
+	position: fixed;
+	display: none;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 350px;
+	height: 150px;
+	background-color: white;
+	z-index: 101;
+	border-radius: 5px;
+	padding: 40px;
+}
+.image-upload-btn{
+	padding: 7px 15px;
+	background-color: #23c0cf;
+	border: none;
+	color: white;
+	border-radius: 4px;
+	margin: 10px 95px;
+}
+.image-field{
+	padding: 5px;
+	border: none;
+	background-color: lightgray;
+	color: gray;
+}
+.active{
+	display: block;
+}
+@media screen and (max-width: 640px) {
+	.Profile-constainer .Profile-info{
+		width: 300px;
+		left: 26%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+	}
+	.Profile-info img{
+		float: none;
+	}
+	.name{
+		display: block;
+		text-align: center;
+		padding-top: 10px;
+	}
+	.username{
+		text-align: center;
+	}
+	.Profile{
+		display: flex;
+		margin-bottom: 250px;
+	}
+}
+@media screen and (max-width: 540px) {
+	.Profile-constainer .Profile-info{
+		width: 300px;
+		left: 20%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+	}
+}
+@media screen and (max-width: 490px) {
+	.Profile-constainer .Profile-info{
+		width: 300px;
+		left: 16%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+	}
+}
+@media screen and (max-width: 430px) {
+	.Profile-constainer .Profile-info{
+		width: 300px;
+		left: 10%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+	}
+}
+@media screen and (max-width: 370px) {
+	.Profile-constainer .Profile-info{
+		width: 300px;
+		left: 9%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+	}
+}

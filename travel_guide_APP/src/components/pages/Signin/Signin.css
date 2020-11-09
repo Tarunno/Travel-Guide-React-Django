@@ -1,0 +1,134 @@
+.signin-showcase{
+	display: flex;
+}
+.signin-showcase-container{
+	background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.2)), url('/static/images/signin.jpg');
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: bottom;
+	height: 50vh;
+	width: 100%;
+}
+.signin-showcase-text{
+	width: 70%;
+	position: relative;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	text-align: center;
+	color: white;
+	text-shadow: 2px 2px 2px black;
+}
+.signin-showcase-text h1{
+	padding: 0px;
+	margin-bottom: 5px;
+	font-size: 50px;
+}
+.signup-form{
+	display: flex;
+	width: 70%;
+	margin: auto;
+	height: 70vh;
+}
+.signup-form h1{
+	padding: 10px;
+}
+.signup-form-container{
+	flex: 1;
+	margin: 0px auto;
+	padding: 30px;
+}
+.login-form-container{
+	flex: 1;
+	margin: 0px auto;
+	padding: 30px;
+}
+.login-form-container input{
+	width: 100%;
+	width: 100%;
+	margin: auto;
+	display: block;
+	padding: 10px;
+	background-color: lightgray;
+	border: none;
+	border-radius: 5px;
+	margin-bottom: 8px;
+}
+.signup-form-container input{
+	width: 100%;
+	margin: auto;
+	display: block;
+	padding: 10px;
+	background-color: lightgray;
+	border: none;
+	border-radius: 5px;
+	margin-bottom: 8px;
+}
+.signup-form button{
+	border: none;
+	padding: 10px;
+	border-radius: 5px;
+	background-color: lightblue;
+	color: gray;
+	transition: .3s;
+}
+.signup-form button:hover{
+	cursor: pointer;
+	background-color: #010724;
+	color: white;
+	transition: .3s;
+}
+.error-message, .error-message-login{
+	color: red;
+	margin-bottom: 5px;
+}
+.note p{
+	font-size: 13px;
+	margin-bottom: 5px;
+}
+.note{
+
+}
+.note i{
+	color: lightblue;
+}
+.note p:hover{
+	cursor: pointer;
+}
+.note p:hover i{
+	color: blue;
+	cursor: pointer;
+}
+.note h3{
+	font-size: 14px;
+}
+.login-message{
+	font-size: 25px;
+	text-align: center;
+}
+@media screen and (max-width: 760px) {
+	.signup-form{
+		display: flex;
+		width: 90%;
+		height: 130vh;
+		margin: auto;
+		flex-direction: column;
+	}
+	.signup-form-container input{
+		text-align: center;
+	}
+	.signup-form-container{
+		width: 90%;
+		margin: 0px auto;
+		padding: 0px;
+		padding-top: 40px;
+	}
+	.login-form-container{
+		width: 90%;
+		margin: 0px auto;
+		padding: 0px;
+	}
+	.signin-showcase-text h1{
+		font-size: 30px;
+	}
+}

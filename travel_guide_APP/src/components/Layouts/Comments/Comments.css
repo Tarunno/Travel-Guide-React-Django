@@ -1,0 +1,35 @@
+.Comments{
+	display: flex;
+}
+.Comments-container{
+	width: 70%;
+	margin: auto;
+}
+.comment-form{
+	display: flex;
+	margin-bottom: 25px;
+}
+.comment-input{
+	flex: 4;
+	margin-right: 10px;
+	padding: 10px;
+	border: none;
+	border-radius: 5px;
+	background-color: lightgray;
+}
+.comment-btn{
+	flex: 1;
+	padding: 10px;
+	border: none;
+	border-radius: 5px;
+	background-color: #23c0cf;
+	font-size: 15px;
+	font-weight: bold;
+	color: white;
+	cursor: pointer;
+}
+@media screen and (max-width: 760px) {
+	.Comments-container{
+		width: 85%;
+	}
+}
