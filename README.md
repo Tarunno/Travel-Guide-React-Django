@@ -9,7 +9,7 @@
 #### 4. Mounting 
 #### 5. Responsive and Interactive
 ## Singin and profile:
-![](GIF/singin.gif)
+![](GIF/signin.gif)
 ### This was my first website I have built in ReactJs along with Django REST frameworks. 
 ## Back-end: Django REST frameworks and SQLite3
 #### 1. corsheaders
