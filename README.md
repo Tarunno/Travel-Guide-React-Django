@@ -1,5 +1,6 @@
 # Travel-Guide-React-Django
 ### Travel guide web application with ReactJs and Django REST framework.
+### Class components
 ## Home page:
 ![](GIF/home.gif)
 ## Front-end: ReactJs
