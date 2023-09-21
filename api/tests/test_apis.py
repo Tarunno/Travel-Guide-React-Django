@@ -1,0 +1,231 @@
+from django.urls import reverse_lazy
+from rest_framework import status
+from rest_framework.test import APITestCase
+from django.core.exceptions import ObjectDoesNotExist
+from .utility import (
+  create_category, delete_images, create_place, create_user,
+  create_image
+)
+
+
+class CategoryListTestCase(APITestCase):
+  def setUp(self):
+    self.url = reverse_lazy('category-list')
+
+    self.category_1 = create_category(
+      name='test_category_1',
+      title='test_title_1',
+      trending=True,
+      image_name='test_image_1',
+      image_extension='JPEG'
+    )
+    
+    self.images = [
+      self.category_1.image
+    ]
+  
+  def test_category_list(self):
+    response = self.client.get(self.url)
+  
+    self.assertEqual(response.status_code, status.HTTP_200_OK)
+    self.assertGreater(len(response.data), 0)
+
+    self.assertEqual(
+      response.data[0]['name'],
+      self.category_1.name
+    )
+    self.assertEqual(
+      response.data[0]['title'], 
+      self.category_1.title
+    )
+    self.assertTrue(response.data[0]['trending'])
+
+  def test_category_list_invalid_request_method(self):
+    response = self.client.post(self.url)
+    
+    self.assertEqual(
+      response.status_code, 
+      status.HTTP_405_METHOD_NOT_ALLOWED
+    )
+
+  def tearDown(self):
+    delete_images(self.images)
+
+
+class CategoryPlaceTestCase(APITestCase):
+  def setUp(self):
+    self.category_1 = create_category(
+      name='test_category_1',
+      title='test_title_1',
+      trending=True,
+      image_name='test_image_1',
+      image_extension='JPEG'
+    )
+
+    self.user_1 = create_user(username='test_user_1')
+    self.user_2 = create_user(username='test_user_2')
+
+    self.place_1 = create_place(
+      category=self.category_1, title='test_title_1',
+      image_name='test_image_1', image_extensiom='JPEG',
+      description='test_description_1',
+      love=[self.user_1, self.user_2]
+    )
+    
+    self.images = [
+      self.category_1.image,
+      self.place_1.image
+    ]
+
+    self.url = reverse_lazy(
+      'category-place',
+      kwargs={'pk': self.category_1.id}
+    )
+
+  def test_category_place(self):
+    response = self.client.get(self.url)
+    
+    self.assertEqual(response.status_code, status.HTTP_200_OK)
+    self.assertGreater(len(response.data), 0)
+    self.assertEqual(response.data[0]['title'], self.place_1.title)
+    self.assertEqual(response.data[0]['love'], [
+      self.user_1.id, self.user_2.id
+    ])
+
+  def test_category_place_non_existing(self):
+    url = reverse_lazy(
+      'category-place',
+      kwargs={'pk': 0}
+    )
+
+    response = self.client.get(url)
+
+    self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+    self.assertIn('message', response.data)
+    self.assertEqual(response.data['message'], 'Invalid category')
+     
+    
+  def test_category_place_invalid_existing(self):
+    url = reverse_lazy(
+      'category-place',
+      kwargs={'pk': 'invalid_id'}
+    )
+    with self.assertRaises(ValueError):
+      self.client.get(url)
+
+  def test_category_place_invalid_request_method(self):
+    response = self.client.post(self.url)
+    
+    self.assertEqual(
+      response.status_code, 
+      status.HTTP_405_METHOD_NOT_ALLOWED
+    )
+
+  def tearDown(self):
+    delete_images(self.images)
+
+
+class CategoryNameTestCase(APITestCase):
+  def setUp(self):
+    self.category_1 = create_category(
+      name='test_category_1',
+      title='test_title_1',
+      trending=True,
+      image_name='test_image_1',
+      image_extension='JPEG'
+    )
+
+    self.images = [
+      self.category_1.image,
+    ]
+
+    self.url = reverse_lazy(
+      'category-name',
+      kwargs={'pk': self.category_1.id}
+    )
+
+  def test_category_name(self):
+    response = self.client.get(self.url)
+    
+    self.assertEqual(response.status_code, status.HTTP_200_OK)
+    self.assertGreater(len(response.data), 0)
+    self.assertEqual(list(response.data)[0], self.category_1.name)
+
+  def test_category_name_non_existing(self):
+    url = reverse_lazy(
+      'category-name',
+      kwargs={'pk': 0}
+    ) 
+
+    response = self.client.get(url)
+
+    self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+    self.assertIn('message', response.data)
+    self.assertEqual(response.data['message'], 'Invalid category')
+    
+  def test_category_name_invalid_existing(self):
+    url = reverse_lazy(
+      'category-name',
+      kwargs={'pk': 'invalid_id'}
+    )
+
+    with self.assertRaises(ValueError):
+      self.client.get(url)      
+
+  def test_category_name_invalid_request_method(self):
+    response = self.client.post(self.url)
+    
+    self.assertEqual(
+      response.status_code, 
+      status.HTTP_405_METHOD_NOT_ALLOWED
+    )
+
+  def tearDown(self):
+    delete_images(self.images)
+
+
+class UserRegistrationAPITestCase(APITestCase):
+  def setUp(self):
+    self.url = reverse_lazy('user-register')
+    self.payload = {
+      'email': 'test@example.com',
+      'first_name': 'test_first_name',
+      'last_name': 'test_last_name',
+      'username': 'test_user',
+      'password': 'password123',
+    }
+    
+  def test_user_registration(self):
+    response = self.client.post(self.url, self.payload)
+
+    self.assertEqual(response.status_code, status.HTTP_200_OK)
+    self.assertIn('email', response.data)
+    self.assertEqual(response.data['email'][0], self.payload['email'])
+
+  def test_user_registration_empty_required_fields(self):
+    invalid_payload = {
+      'email': 'test@example.com',
+      'last_name': 'test_last_name',
+      'password': 'password123',
+    }
+
+    response = self.client.post(self.url, invalid_payload)
+
+    self.assertEqual(response.data['username'][0], 'This field is required.')
+    self.assertEqual(response.data['first_name'][0], 'This field is required.')
+    self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+  def test_user_registration_invalid_fields(self):
+    invalid_payload = {
+      'email': 'test@example.com',
+      'first_name': 'test_first_name',
+      'last_name': 'test_last_name',
+      'username': 'test_user',
+      'password': 'password123',
+      'admin': True
+    }
+
+    response = self.client.post(self.url, invalid_payload)
+    
+    self.assertEqual(response.data['email'][0], invalid_payload['email'])
+    self.assertEqual(response.status_code, status.HTTP_200_OK)
