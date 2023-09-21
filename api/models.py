@@ -46,14 +46,14 @@ class Place(models.Model):
 
 class Traveler(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=False)
-    image = models.ImageField(null=True, blank=True, upload_to="traveler/")
+    image = models.ImageField(null=True, blank=True, upload_to="traveler/", default='traveler/default.jpg')
 
     def __str__(self):
         return self.user.username
 
     def save(self, *args, **kwargs):
         super(Traveler, self).save(*args, **kwargs)
-
+        
         img = Image.open(self.image.path)
 
         if img.height > 700 or img.width > 700:

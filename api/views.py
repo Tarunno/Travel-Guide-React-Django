@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 
 from rest_framework.response import Response
+from rest_framework import status
 import json
 
 from rest_framework.authentication import TokenAuthentication
@@ -41,14 +42,26 @@ def CategoryList(request):
 
 @api_view(['GET'])
 def CategoryPlace(request, pk):
-    category = Category.objects.get(id=pk)
+    try:
+        category = Category.objects.get(id=pk)
+    except Category.DoesNotExist:
+        return Response(
+            {'message': 'Invalid category'},
+            status=status.HTTP_404_NOT_FOUND
+        )
     places = Place.objects.filter(category=category).all()
     serializer = PlaceSerializer(places, many=True)
     return Response(serializer.data)
 
 @api_view(['GET'])
 def CategoryName(request, pk):
-    category = Category.objects.get(id=pk)
+    try:
+        category = Category.objects.get(id=pk)
+    except Category.DoesNotExist:
+        return Response(
+            {'message': 'Invalid category'},
+            status=status.HTTP_404_NOT_FOUND
+        )
     return Response({category.name})
 
 @api_view(['GET'])
