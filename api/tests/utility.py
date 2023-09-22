@@ -1,5 +1,6 @@
 from api.models import *
 from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
 from django.core.files.uploadedfile import SimpleUploadedFile
 from io import BytesIO
 from PIL import Image
@@ -44,10 +45,10 @@ def create_category(
   return category
 
 
-def create_user(username='test_user'):
+def create_user(username='test_user', password='test_password'):
   return User.objects.create(
     username=username,
-    password='test_password'
+    password=make_password(password)
   )
 
 
@@ -58,17 +59,15 @@ def create_place(
   ):
 
   if category is None:
-    category = create_category()
-
-  image = create_image(
-    name=image_name, 
-    image_extension=image_extensiom
-  )
+    category = create_category(
+      image_name=image_name,
+      image_extension=image_extensiom
+    )
   
   place = Place.objects.create(
     category=category,
     title=title,
-    image=image,
+    image=category.image,
     description=description
   )
   place.love.set(love)

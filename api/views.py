@@ -66,7 +66,13 @@ def CategoryName(request, pk):
 
 @api_view(['GET'])
 def PlaceDetails(request, pk):
-    place = Place.objects.get(id=pk)
+    try:
+        place = Place.objects.get(id=pk)
+    except Place.DoesNotExist:
+        return Response(
+            {'message': 'Invalid place'},
+            status=status.HTTP_404_NOT_FOUND
+        )
     serializer = PlaceSerializer(place, many=False)
     return Response(serializer.data)
 

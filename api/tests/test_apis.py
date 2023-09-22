@@ -1,6 +1,7 @@
 from django.urls import reverse_lazy
 from rest_framework import status
 from rest_framework.test import APITestCase
+from rest_framework.authtoken.models import Token
 from django.core.exceptions import ObjectDoesNotExist
 from .utility import (
   create_category, delete_images, create_place, create_user,
@@ -163,7 +164,7 @@ class CategoryNameTestCase(APITestCase):
     self.assertIn('message', response.data)
     self.assertEqual(response.data['message'], 'Invalid category')
     
-  def test_category_name_invalid_existing(self):
+  def test_category_name_invalid(self):
     url = reverse_lazy(
       'category-name',
       kwargs={'pk': 'invalid_id'}
@@ -184,7 +185,7 @@ class CategoryNameTestCase(APITestCase):
     delete_images(self.images)
 
 
-class UserRegistrationAPITestCase(APITestCase):
+class UserRegistrationTestCase(APITestCase):
   def setUp(self):
     self.url = reverse_lazy('user-register')
     self.payload = {
@@ -215,6 +216,21 @@ class UserRegistrationAPITestCase(APITestCase):
     self.assertEqual(response.data['first_name'][0], 'This field is required.')
     self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+  def test_user_registration_invalid_credential(self):
+    invalid_payload = {
+      'email': 'testexample.com', 
+      'first_name': 'test_first_name',
+      'last_name': 'test_last_name',
+      'username': 'test_user',
+      'password': 'password123',
+    }
+
+    response = self.client.post(self.url, invalid_payload)
+
+    self.assertEqual(response.status_code, status.HTTP_200_OK)
+    self.assertEqual(response.data['email'][0], 'Enter a valid email address.')
+    self.assertEqual(response.data['email'][0].code, 'invalid')
+
   def test_user_registration_invalid_fields(self):
     invalid_payload = {
       'email': 'test@example.com',
@@ -229,3 +245,112 @@ class UserRegistrationAPITestCase(APITestCase):
     
     self.assertEqual(response.data['email'][0], invalid_payload['email'])
     self.assertEqual(response.status_code, status.HTTP_200_OK)
+  
+  def test_user_registration_invalid_request_method(self):
+    response = self.client.get(self.url, self.payload)
+    
+    self.assertEqual(
+      response.status_code, 
+      status.HTTP_405_METHOD_NOT_ALLOWED
+    )
+
+
+class UserLoginTestCase(APITestCase):
+  def setUp(self):
+    self.url = reverse_lazy('user-login')
+    self.user = create_user(
+      username='test_username',
+      password='test_password'
+    )
+
+    self.token = Token.objects.create(user=self.user)
+
+    self.payload = {
+      'username': self.user.username,
+      'password': 'test_password',
+    }
+    
+  def test_user_login(self):
+    response = self.client.post(self.url, self.payload)
+
+    self.assertEqual(response.status_code, status.HTTP_200_OK)
+    self.assertIn('token', response.data)
+    self.assertEqual(response.data['token'], self.token.key)
+
+  def test_user_login_invalid_credential(self):
+    invalid_credentials = {
+      'username': self.user.username,
+      'password': 'invalid_test_password',
+    }
+    response = self.client.post(self.url, invalid_credentials)
+
+    self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+    self.assertEqual(
+      response.data['non_field_errors'][0], 
+      'Unable to log in with provided credentials.'
+    )
+    self.assertEqual(
+      response.data['non_field_errors'][0].code, 
+      'authorization'
+    )
+
+  def test_user_login_invalid_field(self):
+    invalid_payload = {
+      'user': self.user.username,
+      'pass': 'test_password',
+    }
+    response = self.client.post(self.url, invalid_payload)
+    
+    self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+    self.assertEqual(response.data['username'][0], 'This field is required.')
+    self.assertEqual(response.data['password'][0], 'This field is required.')
+    self.assertEqual(response.data['username'][0].code, 'required')
+    self.assertEqual(response.data['password'][0].code, 'required')
+
+  def test_user_login_invalid_request_method(self):
+    response = self.client.get(self.url, self.payload)
+    
+    self.assertEqual(
+      response.status_code, 
+      status.HTTP_405_METHOD_NOT_ALLOWED
+    )
+
+
+class PlaceDetailsTestCase(APITestCase):
+  def setUp(self):
+    self.place = create_place(
+      title='test_title',
+      image_name='test_image',
+      image_extensiom='JPEG',
+      description='test_description'
+    )
+
+    self.images = [
+      self.place.image
+    ]
+
+    self.url = reverse_lazy('place', kwargs={'pk': self.place.id})
+
+  def test_place_details(self):
+    response = self.client.get(self.url)
+    
+    self.assertEqual(response.status_code, status.HTTP_200_OK)
+    self.assertEqual(response.data['title'], self.place.title)
+    self.assertEqual(response.data['description'], self.place.description)
+    self.assertEqual(response.data['category'], self.place.category.id)
+    self.assertTrue(len(response.data['love']) == 0)
+
+  def test_place_details_non_existing(self):
+    url = reverse_lazy('place', kwargs={'pk': 0})
+    response = self.client.get(url)
+
+    self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+    self.assertEqual(response.data['message'], 'Invalid place')
+
+  def test_place_details_invalid(self):
+    url = reverse_lazy('place', kwargs={'pk': 'invalid id'})
+    with self.assertRaises(ValueError):
+      self.client.get(url)
+
+  def tearDown(self):
+    delete_images(self.images)
