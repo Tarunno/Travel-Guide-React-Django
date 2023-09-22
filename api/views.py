@@ -70,7 +70,7 @@ def PlaceDetails(request, pk):
     serializer = PlaceSerializer(place, many=False)
     return Response(serializer.data)
 
-@api_view(['GET', 'POST'])
+@api_view(['POST'])
 def UserRegistration(request):
     serializer = UserRegistrationSerializer(data=request.data)
     if serializer.is_valid():
@@ -86,7 +86,7 @@ def UserRegistration(request):
         })
     return Response(serializer.errors)
 
-@api_view(['GET', 'POST'])
+@api_view(['POST'])
 def UserLogin(request):
     serializer = UserAuthSerializer(data=request.data)
     return Response(serializer.data)
