@@ -99,7 +99,13 @@ def UserLogin(request):
 
 @api_view(['GET'])
 def UserProfile(request, username):
-    user = User.objects.get(username=username)
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return Response(
+            {'message': 'User doesn\'t exists'},
+            status=status.HTTP_404_NOT_FOUND
+        )
     id = user.id
     profile = Traveler.objects.get(user=id)
     serializer = ProfileSerializer(profile, many=False)
@@ -107,7 +113,13 @@ def UserProfile(request, username):
 
 @api_view(['GET'])
 def UserDetail(request, username):
-    user = User.objects.get(username=username)
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return Response(
+            {'message': 'User doesn\'t exists'},
+            status=status.HTTP_404_NOT_FOUND
+        )
     serializer = UserDetailSerializer(user, many=False)
     return Response(serializer.data)
 

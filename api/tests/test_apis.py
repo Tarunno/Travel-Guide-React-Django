@@ -1,11 +1,12 @@
 from django.urls import reverse_lazy
+from django.conf import settings
 from rest_framework import status
 from rest_framework.test import APITestCase
 from rest_framework.authtoken.models import Token
 from django.core.exceptions import ObjectDoesNotExist
 from .utility import (
   create_category, delete_images, create_place, create_user,
-  create_image
+  create_image, get_traveler
 )
 
 
@@ -352,5 +353,89 @@ class PlaceDetailsTestCase(APITestCase):
     with self.assertRaises(ValueError):
       self.client.get(url)
 
+  def test_place_details_invalid_request_method(self):
+    response = self.client.post(self.url)
+    
+    self.assertEqual(
+      response.status_code, 
+      status.HTTP_405_METHOD_NOT_ALLOWED
+    )
+
   def tearDown(self):
     delete_images(self.images)
+
+
+class UserProfileTestCase(APITestCase):
+  def setUp(self):
+    self.user = create_user(
+      username='test_user',
+      password='test_password'
+    )
+
+    self.traveler = get_traveler(user=self.user)
+    
+    self.url = reverse_lazy(
+      'user-profile', 
+      kwargs={'username': self.user.username}
+    )
+
+  def test_user_profile(self):
+    response = self.client.get(self.url)
+    image = settings.MEDIA_URL + self.traveler.image.name
+
+    self.assertEqual(response.status_code, status.HTTP_200_OK)
+    self.assertEqual(response.data['user'], self.user.id)
+    self.assertEqual(response.data['image'], image)
+
+  def test_user_profile_non_existing(self):
+    url = reverse_lazy('user-profile', kwargs={'username': 'non-existing'})
+    response = self.client.get(url)
+    
+    self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+    self.assertEqual(response.data['message'], 'User doesn\'t exists')
+
+  def test_user_profile_invalid_request_method(self):
+    response = self.client.post(self.url)
+
+    self.assertEqual(
+      response.status_code,
+      status.HTTP_405_METHOD_NOT_ALLOWED
+    )
+
+  
+class UserDetailsTestCase(APITestCase):
+  def setUp(self):
+    self.user = create_user(
+      username='test_user',
+      password='test_password',
+      email='test_email_details@fakemail.com'
+    )
+
+    self.traveler = get_traveler(user=self.user)
+    
+    self.url = reverse_lazy(
+      'user-detail', 
+      kwargs={'username': self.user.username}
+    )
+  
+  def test_user_details(self):
+    response = self.client.get(self.url)
+    
+    self.assertEqual(response.status_code, status.HTTP_200_OK)
+    self.assertEqual(response.data['email'], self.user.email)
+
+
+  def test_user_details_non_existing(self):
+    url = reverse_lazy('user-detail', kwargs={'username': 'non-existing'})
+    response = self.client.get(url)
+    
+    self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+    self.assertEqual(response.data['message'], 'User doesn\'t exists')
+
+  def test_user_details_invalid_request_method(self):
+    response = self.client.post(self.url)
+
+    self.assertEqual(
+      response.status_code,
+      status.HTTP_405_METHOD_NOT_ALLOWED
+    )

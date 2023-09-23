@@ -45,12 +45,26 @@ def create_category(
   return category
 
 
-def create_user(username='test_user', password='test_password'):
-  return User.objects.create(
+def create_user(
+    username='test_user', password='test_password', 
+    first_name='test_first_name', last_name='test_last_name',
+    email='test_email@fakemail.com'
+  ):
+  user = User.objects.create(
     username=username,
-    password=make_password(password)
+    password=make_password(password),
+    first_name=first_name,
+    last_name=last_name,
+    email=email
   )
+  Traveler.objects.create(user=user)
+  return user
 
+
+def get_traveler(user=None):
+  if user is None:
+    user = create_user(username='test_user', password='test_password')
+  return Traveler.objects.get(user=user)
 
 def create_place(
     category=None, title='test_title',
