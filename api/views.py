@@ -156,8 +156,25 @@ def UserPinPlace(request, token):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def PinCheck(request, pk, username):
-    place = Place.objects.get(id=pk)
-    user = User.objects.get(username=username)
+    try:
+        place = Place.objects.get(id=pk)
+    except Place.DoesNotExist:
+        return Response(
+            {'message': 'Invalid place'},
+            status=status.HTTP_404_NOT_FOUND
+        )
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return Response(
+            {'message': 'Invalid username'},
+            status=status.HTTP_404_NOT_FOUND
+        )
+    if user != request.user:
+        return Response(
+            {'message': 'Invalid user'},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
     pinned = False
     for pinplace in PinPlace.objects.all():
         if place == pinplace.place:

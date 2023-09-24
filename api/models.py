@@ -29,7 +29,7 @@ class Place(models.Model):
     title = models.CharField(max_length=300, null=True, blank=False)
     image = models.ImageField(null=True, blank=True, upload_to='places/')
     description =  RichTextField(null=True, blank=False)
-    love = models.ManyToManyField(User, null=True, blank=True)
+    love = models.ManyToManyField(User, blank=True)
 
     def __str__(self):
         return self.title

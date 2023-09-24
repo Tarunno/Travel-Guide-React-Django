@@ -496,3 +496,71 @@ class UserPinPlaceTestCase(APITestCase):
   def tearDown(self):
     delete_images(self.images)
 
+
+class PinCheckTestCase(APITestCase):
+  def setUp(self):
+    self.user = create_user(
+      username='test_username',
+      password='test_password'
+    )
+
+    self.token = Token.objects.create(user=self.user)
+    
+    self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+
+    self.place_1 = create_place(title='test_place_1')
+    self.place_2 = create_place(title='test_place_2')
+
+    self.pin_place_1 = pin_place(user=self.user, place=self.place_1)
+
+    self.url_pinned = reverse_lazy(
+      'pin-check', 
+      kwargs={
+        'pk': self.place_1.id,
+        'username': self.user.username
+      }
+    )
+    
+    self.url_unpinned = reverse_lazy(
+      'pin-check', 
+      kwargs={
+        'pk': self.place_2.id,
+        'username': self.user.username
+      }
+    )
+
+    self.images = [
+      self.place_1.image,
+      self.place_2.image
+    ]
+
+  def test_pin_check_pinned(self):
+    response = self.client.get(self.url_pinned)
+
+    self.assertEqual(response.status_code, status.HTTP_200_OK)
+    self.assertTrue(response.data['pinned'])
+
+  def test_pin_check_unpinned(self):
+    response = self.client.get(self.url_unpinned)
+    
+    self.assertEqual(response.status_code, status.HTTP_200_OK)
+    self.assertFalse(response.data['pinned'])
+
+  def test_pin_check_unauthorized(self):
+    self.client.credentials(HTTP_AUTHORIZATION='')
+    response = self.client.get(self.url_pinned)
+    
+    self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+  def test_pin_check_invalid_token(self):
+    user = create_user(username='test_user_2')
+    token = Token.objects.create(user=user)
+
+    self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+    response = self.client.get(self.url_pinned)
+    
+    self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+    self.assertEqual(response.data['message'], 'Invalid user')
+
+  def tearDown(self):
+    delete_images(self.images)
