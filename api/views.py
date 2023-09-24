@@ -186,8 +186,25 @@ def PinCheck(request, pk, username):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def PinSwap(request, pk, username):
-    target = Place.objects.get(id=pk)
-    user = User.objects.get(username=username)
+    try:
+        target = Place.objects.get(id=pk)
+    except Place.DoesNotExist:
+        return Response(
+            {'message': 'Invalid place'},
+            status=status.HTTP_404_NOT_FOUND
+        )
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return Response(
+            {'message': 'Invalid username'},
+            status=status.HTTP_404_NOT_FOUND
+        )
+    if user != request.user:
+        return Response(
+            {'message': 'Invalid user'},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
     pinned, found = False, False
     pinplaces = PinPlace.objects.filter(user=user)
     for place in pinplaces:
@@ -203,11 +220,23 @@ def PinSwap(request, pk, username):
 @api_view(['GET'])
 def LoveCheck(request, pk, username):
     count, loved = 0, False
-    place = Place.objects.get(id=pk)
+    try:
+        place = Place.objects.get(id=pk)
+    except Place.DoesNotExist:
+        return Response(
+            {'message': 'Invalid place'},
+            status=status.HTTP_404_NOT_FOUND
+        )
     if username == 'default':
         count = place.love.count()
     else:
-        user = User.objects.get(username=username)
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return Response(
+            {'message': 'Invalid username'},
+            status=status.HTTP_404_NOT_FOUND
+        )
         loved = False
         count = place.love.count()
         if user in place.love.all():
@@ -219,8 +248,25 @@ def LoveCheck(request, pk, username):
 @permission_classes([IsAuthenticated])
 def LoveSwap(request, pk, username):
     count, loved = 0, False
-    place = Place.objects.get(id=pk)
-    user = User.objects.get(username=username)
+    try:
+        place = Place.objects.get(id=pk)
+    except Place.DoesNotExist:
+        return Response(
+            {'message': 'Invalid place'},
+            status=status.HTTP_404_NOT_FOUND
+        )
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return Response(
+            {'message': 'Invalid username'},
+            status=status.HTTP_404_NOT_FOUND
+        )
+    if user != request.user:
+        return Response(
+            {'message': 'Invalid user'},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
     loved = False
     if user in place.love.all():
         place.love.remove(user)
