@@ -281,7 +281,12 @@ def LoveSwap(request, pk, username):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def PlaceComments(request, pk, start, end):
-    place = Place.objects.get(id=pk)
+    try:
+        place = Place.objects.get(id=pk)
+    except Place.DoesNotExist:
+        return Response(
+            {'message': 'Invalid place'}
+        )
     count = Comments.objects.filter(place=place).order_by('-time').count()
     comments = Comments.objects.filter(place=place).order_by('-time')[int(start):int(end)]
     list_comments = []
