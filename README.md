@@ -1,5 +1,4 @@
-# Travel-Guide-React-Django
-### Travel guide web application with ReactJs and Django REST framework.
+# TARUNNO Travels
 
 ## Home page:
 ![](GIF/home.gif)
@@ -11,15 +10,12 @@
 #### 2. React state and props
 #### 3. Components 
 #### 4. Life cycle 
-#### 5. Responsive and Interactive
+#### 5. Responsive
 
-## Back-end: Django REST frameworks and SQLite3
-#### 1. corsheaders
-#### 2. token authentication 
-#### 3. CURD
+## Back-end: Django REST Framework
+#### 1. Token authentication 
+#### 2. CURD
+#### 3. Unit testing
 
-### In back-end I have built a REST API using django. It has CURD fauntionalities. We can authenticate users and upload profile image also.
 ## API overview:
 ![](Screen-shots/api_overview.png)
-
-# Super user: Travel
