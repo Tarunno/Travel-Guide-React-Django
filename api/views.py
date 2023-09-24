@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 
 from rest_framework.response import Response
@@ -127,8 +127,16 @@ def UserDetail(request, username):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def UserPinPlace(request, token):
-    user = Token.objects.get(key=token)
-    user = user.user
+    try:
+        user = Token.objects.get(key=token)
+        user = user.user
+        if user != request.user:
+            raise Token.DoesNotExist()
+    except Token.DoesNotExist:
+        return Response(
+            {'message': 'Invalid token'},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
     pinplaces = PinPlace.objects.filter(user=user)
     places = []
     for place in pinplaces:
@@ -212,7 +220,6 @@ def LoveSwap(request, pk, username):
 def PlaceComments(request, pk, start, end):
     place = Place.objects.get(id=pk)
     count = Comments.objects.filter(place=place).order_by('-time').count()
-    print(count)
     comments = Comments.objects.filter(place=place).order_by('-time')[int(start):int(end)]
     list_comments = []
     for comment in comments:

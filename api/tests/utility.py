@@ -87,3 +87,14 @@ def create_place(
   place.love.set(love)
 
   return place
+
+
+def pin_place(user=None, place=None):
+  if user is None:
+    user = create_user()
+  if place is None:
+    place = create_place()
+
+  return PinPlace.objects.create(
+    place=place, user=user
+  )

@@ -6,7 +6,7 @@ from rest_framework.authtoken.models import Token
 from django.core.exceptions import ObjectDoesNotExist
 from .utility import (
   create_category, delete_images, create_place, create_user,
-  create_image, get_traveler
+  create_image, get_traveler, pin_place
 )
 
 
@@ -439,3 +439,60 @@ class UserDetailsTestCase(APITestCase):
       response.status_code,
       status.HTTP_405_METHOD_NOT_ALLOWED
     )
+
+class UserPinPlaceTestCase(APITestCase):
+  def setUp(self):
+    self.user = create_user(
+      username='test_username',
+      password='test_password'
+    )
+
+    self.token = Token.objects.create(user=self.user)
+    
+    self.url = reverse_lazy(
+      'user-pin-place', 
+      kwargs={
+        'token': self.token.key
+      }
+    )
+
+    self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+
+    self.place_1 = create_place(title='test_place_1')
+    self.place_2 = create_place(title='test_place_2')
+
+    self.pin_place_1 = pin_place(user=self.user, place=self.place_1)
+    self.pin_place_2 = pin_place(user=self.user, place=self.place_2)
+
+    self.images = [
+      self.place_1.image,
+      self.place_2.image
+    ]
+
+  def test_user_pin_place(self):
+    response = self.client.get(self.url)
+
+    self.assertEqual(response.status_code, status.HTTP_200_OK)
+    self.assertGreater(len(response.data), 0)
+    self.assertEqual(response.data[0]['title'], self.place_1.title)
+    self.assertEqual(response.data[1]['title'], self.place_2.title)
+
+  
+  def test_user_pin_place_unauthorized(self):
+    self.client.credentials(HTTP_AUTHORIZATION='')
+    response = self.client.get(self.url)
+    self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+  def test_user_pin_place_invalid_token(self):
+    user = create_user(username='test_user_2')
+    token = Token.objects.create(user=user)
+
+    self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+  
+    response = self.client.get(self.url)
+    self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+    self.assertEqual(response.data['message'], 'Invalid token')
+    
+  def tearDown(self):
+    delete_images(self.images)
+
