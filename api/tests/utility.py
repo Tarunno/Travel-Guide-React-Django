@@ -98,3 +98,16 @@ def pin_place(user=None, place=None):
   return PinPlace.objects.create(
     place=place, user=user
   )
+
+
+def create_comment(place=None, user=None, comment='test_comment'):
+  if place is None:
+    place = create_place()
+  if user is None:
+    user = create_user()
+  
+  return Comments.objects.create(
+    place=place,
+    user=user,
+    comment=comment
+  )

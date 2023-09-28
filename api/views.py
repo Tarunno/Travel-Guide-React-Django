@@ -285,7 +285,8 @@ def PlaceComments(request, pk, start, end):
         place = Place.objects.get(id=pk)
     except Place.DoesNotExist:
         return Response(
-            {'message': 'Invalid place'}
+            {'message': 'Invalid place'},
+            status=status.HTTP_404_NOT_FOUND
         )
     count = Comments.objects.filter(place=place).order_by('-time').count()
     comments = Comments.objects.filter(place=place).order_by('-time')[int(start):int(end)]

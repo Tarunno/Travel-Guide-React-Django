@@ -4,9 +4,11 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from rest_framework.authtoken.models import Token
 from django.core.exceptions import ObjectDoesNotExist
+import json
+
 from .utility import (
   create_category, delete_images, create_place, create_user,
-  create_image, get_traveler, pin_place
+  create_image, get_traveler, pin_place, create_comment
 )
 
 
@@ -703,7 +705,7 @@ class LoveSwapTestCase(APITestCase):
       }
     )
     
-    self.url_not_loved = reverse_lazy(
+    self.url_not_loved = reverse_lazy(      
       'love-swap', 
       kwargs={
         'pk': self.place_2.id,
@@ -747,3 +749,78 @@ class LoveSwapTestCase(APITestCase):
   def tearDown(self):
     delete_images(self.images)
     
+
+
+class PlaceCommentsTestCase(APITestCase):
+  def setUp(self):
+    self.user = create_user(
+      username='test_username',
+      password='test_password'
+    )
+
+    self.token = Token.objects.create(user=self.user)
+    self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+
+    self.place_1 = create_place(title='test_place_1')
+    self.comment_1 = create_comment(
+      place=self.place_1, 
+      user=self.user,
+      comment='test_comment_1'
+    )
+
+    self.url = reverse_lazy(
+      'place-comments', 
+      kwargs={
+        'pk': self.place_1.id,
+        'start': 0,
+        'end': 10
+      }
+    )
+
+    self.images = [
+      self.place_1.image,
+    ]
+
+  def test_place_comments(self):
+    response = self.client.get(self.url)
+    
+    self.assertEqual(response.status_code, status.HTTP_200_OK)
+    response_data = json.loads(response.data)
+    self.assertIsNotNone(response_data[0][0])
+    self.assertEqual(response_data[0][0]['comment'], self.comment_1.comment)
+
+  def test_place_comments_non_existing_place(self):
+    url = reverse_lazy(
+      'place-comments', 
+      kwargs={
+        'pk': 0,
+        'start': 0,
+        'end': 10
+      }
+    )
+    response = self.client.get(url)
+    
+    self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+    self.assertEqual(response.data['message'], 'Invalid place')
+
+  def test_place_comments_invalid_place(self):
+    url = reverse_lazy(
+      'place-comments', 
+      kwargs={
+        'pk': 'invalid',
+        'start': 0,
+        'end': 10
+      }
+    )
+    with self.assertRaises(ValueError):
+      self.client.get(url)
+
+  def test_place_comments_unauthorized(self):
+    self.client.credentials(HTTP_AUTHORIZATION='')
+    response = self.client.get(self.url)
+    self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+  def tearDown(self):
+    delete_images(self.images)
+
+
